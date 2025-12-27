@@ -1,470 +1,794 @@
-import React, { useState } from 'react';
-import { CheckCircle, BookOpen, Award, ArrowRight, RotateCcw } from 'lucide-react';
-
-const RIASECTest = () => {
-  const [currentPage, setCurrentPage] = useState('intro');
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [results, setResults] = useState(null);
-
-  const questions = [
-    { id: 1, text: "Saya suka membuat atau memperbaiki barang dengan tangan saya", type: "R" },
-    { id: 2, text: "Saya suka berpikir dan memecahkan teka-teki atau masalah yang rumit", type: "I" },
-    { id: 3, text: "Saya suka menggambar, melukis, atau membuat desain kreatif", type: "A" },
-    { id: 4, text: "Saya suka membantu dan mengajar teman-teman saya", type: "S" },
-    { id: 5, text: "Saya suka memimpin kelompok dan mengorganisir kegiatan", type: "E" },
-    { id: 6, text: "Saya suka mengatur barang-barang saya dengan rapi dan teratur", type: "C" },
-    { id: 7, text: "Saya suka kegiatan olahraga atau aktivitas fisik", type: "R" },
-    { id: 8, text: "Saya suka membaca buku sains atau melakukan eksperimen", type: "I" },
-    { id: 9, text: "Saya suka menulis cerita atau membuat konten kreatif", type: "A" },
-    { id: 10, text: "Saya senang berbicara dan berkenalan dengan orang baru", type: "S" },
-    { id: 11, text: "Saya suka berdiskusi dan meyakinkan orang lain tentang ide saya", type: "E" },
-    { id: 12, text: "Saya suka mengikuti jadwal dan aturan yang jelas", type: "C" },
-    { id: 13, text: "Saya lebih suka bekerja dengan alat atau teknologi daripada berinteraksi sosial", type: "R" },
-    { id: 14, text: "Saya suka mencari tahu bagaimana sesuatu bekerja", type: "I" },
-    { id: 15, text: "Saya suka mendekorasi atau membuat sesuatu yang indah", type: "A" },
-    { id: 16, text: "Saya merasa senang ketika bisa membantu orang lain menyelesaikan masalah", type: "S" },
-    { id: 17, text: "Saya tertarik dengan bisnis atau berwirausaha", type: "E" },
-    { id: 18, text: "Saya lebih suka tugas yang memiliki langkah-langkah yang jelas", type: "C" },
-  ];
-
-  const classRecommendations = {
-    R: [
-      { name: "Kelas Coding Scratch", match: "tinggi" },
-      { name: "Kelas AI Literacy", match: "sedang" }
-    ],
-    I: [
-      { name: "Kelas Coding Scratch", match: "tinggi" },
-      { name: "Kelas AI Literacy", match: "tinggi" }
-    ],
-    A: [
-      { name: "Kelas Canva", match: "tinggi" },
-      { name: "Kelas Coding Scratch", match: "sedang" }
-    ],
-    S: [
-      { name: "Kelas Bahasa Arab", match: "tinggi" },
-      { name: "Kelas Bahasa Inggris", match: "tinggi" },
-      { name: "Kelas Soft Skill and Leadership", match: "tinggi" },
-      { name: "Kelas Pendampingan Exam", match: "tinggi" },
-      { name: "Kelas Tahfidz dan Mengaji", match: "tinggi" },
-      { name: "Kelas Calistung", match: "tinggi" }
-    ],
-    E: [
-      { name: "Kelas Soft Skill and Leadership", match: "tinggi" },
-      { name: "Kelas Canva", match: "tinggi" },
-      { name: "Kelas Bahasa Inggris", match: "sedang" }
-    ],
-    C: [
-      { name: "Kelas Coding Scratch", match: "tinggi" },
-      { name: "Kelas AI Literacy", match: "tinggi" },
-      { name: "Kelas Bahasa Arab", match: "sedang" },
-      { name: "Kelas Bahasa Inggris", match: "sedang" },
-      { name: "Kelas Calistung", match: "tinggi" },
-      { name: "Kelas Pendampingan Exam", match: "sedang" }
-    ]
-  };
-
-  const riasecDescriptions = {
-    R: { 
-      name: "Realistic (Realistis)", 
-      desc: "Kamu suka bekerja dengan tangan dan hal-hal praktis!",
-      detailed: "Anak dengan tipe Realistis cenderung suka aktivitas fisik, bekerja dengan alat dan mesin, serta hal-hal yang konkret. Mereka lebih nyaman dengan tugas yang memiliki hasil nyata yang bisa dilihat dan disentuh.",
-      careers: "Engineer, Programmer, Arsitek, Teknisi, Ahli Robotika, Desainer Produk"
-    },
-    I: { 
-      name: "Investigative (Investigatif)", 
-      desc: "Kamu suka berpikir, menganalisis, dan memecahkan masalah!",
-      detailed: "Anak dengan tipe Investigatif memiliki rasa ingin tahu yang tinggi, suka berpikir kritis, dan senang memecahkan teka-teki kompleks. Mereka gemar melakukan riset, eksperimen, dan mencari tahu 'mengapa' di balik sesuatu.",
-      careers: "Ilmuwan, Peneliti, Data Analyst, Dokter, Programmer, AI Specialist"
-    },
-    A: { 
-      name: "Artistic (Artistik)", 
-      desc: "Kamu kreatif dan suka hal-hal yang berhubungan dengan seni!",
-      detailed: "Anak dengan tipe Artistik memiliki imajinasi yang kuat dan cara berpikir yang original. Mereka senang mengekspresikan diri melalui berbagai bentuk kreativitas, tidak suka rutinitas yang kaku, dan lebih menyukai lingkungan yang memberikan kebebasan berkreasi.",
-      careers: "Desainer Grafis, Content Creator, Animator, Penulis, Musisi, Artis Digital, UI/UX Designer"
-    },
-    S: { 
-      name: "Social (Sosial)", 
-      desc: "Kamu suka membantu dan berinteraksi dengan orang lain!",
-      detailed: "Anak dengan tipe Sosial memiliki empati yang tinggi, senang berinteraksi dengan orang lain, dan merasa puas ketika bisa membantu. Mereka cenderung komunikatif, ramah, dan peduli dengan kesejahteraan orang lain.",
-      careers: "Guru, Psikolog, Konselor, Perawat, Public Relations, Customer Service, HR Specialist"
-    },
-    E: { 
-      name: "Enterprising (Enterprising)", 
-      desc: "Kamu suka memimpin dan mengorganisir!",
-      detailed: "Anak dengan tipe Enterprising memiliki jiwa kepemimpinan, percaya diri, dan berani mengambil inisiatif. Mereka senang mengorganisir kegiatan, meyakinkan orang lain, dan tertarik dengan tantangan bisnis atau proyek besar.",
-      careers: "Entrepreneur, Business Manager, Marketing Director, Project Manager, Sales Executive"
-    },
-    C: { 
-      name: "Conventional (Konvensional)", 
-      desc: "Kamu terorganisir dan suka hal-hal yang terstruktur!",
-      detailed: "Anak dengan tipe Konvensional menyukai keteraturan, detail, dan prosedur yang jelas. Mereka teliti, sistematis, dan nyaman dengan tugas-tugas yang memiliki aturan dan struktur yang pasti. Mereka juga cenderung bertanggung jawab dan dapat diandalkan.",
-      careers: "Akuntan, Administrator, Data Entry Specialist, Librarian, Quality Control, Auditor"
-    }
-  };
-
-  const handleAnswer = (value) => {
-    const newAnswers = { ...answers, [currentQuestion]: value };
-    setAnswers(newAnswers);
-    
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      calculateResults(newAnswers);
-    }
-  };
-
-  const calculateResults = (finalAnswers) => {
-    const scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
-    
-    questions.forEach((q, index) => {
-      const answer = finalAnswers[index];
-      if (answer) {
-        scores[q.type] += answer;
-      }
-    });
-
-    const sortedScores = Object.entries(scores)
-      .sort(([, a], [, b]) => b - a)
-      .map(([type, score]) => ({ type, score }));
-
-    const topTypes = sortedScores.slice(0, 3);
-    
-    // Get all classes with matching scores
-    const allClasses = [
-      "Kelas Coding Scratch",
-      "Kelas AI Literacy",
-      "Kelas Canva",
-      "Kelas Bahasa Arab",
-      "Kelas Bahasa Inggris",
-      "Kelas Soft Skill and Leadership",
-      "Kelas Pendampingan Exam",
-      "Kelas Tahfidz dan Mengaji",
-      "Kelas Calistung"
-    ];
-
-    const recommendedClasses = [];
-    const notRecommendedClasses = [];
-
-    allClasses.forEach(className => {
-      let isRecommended = false;
-      let matchLevel = "";
-      
-      topTypes.forEach(({ type }) => {
-        const recommendations = classRecommendations[type];
-        const match = recommendations.find(r => r.name === className);
-        if (match) {
-          isRecommended = true;
-          if (match.match === "tinggi" && matchLevel !== "tinggi") {
-            matchLevel = "tinggi";
-          } else if (match.match === "sedang" && !matchLevel) {
-            matchLevel = "sedang";
-          }
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test RIASEC Lajukids - Temukan Minat dan Bakatmu!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-      });
 
-      if (isRecommended) {
-        recommendedClasses.push({ name: className, match: matchLevel });
-      } else {
-        notRecommendedClasses.push(className);
-      }
-    });
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0F4A95 0%, #1e66c4 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
 
-    setResults({
-      scores: sortedScores,
-      topTypes,
-      recommendedClasses,
-      notRecommendedClasses
-    });
-    setCurrentPage('results');
-  };
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
 
-  const resetTest = () => {
-    setCurrentPage('intro');
-    setCurrentQuestion(0);
-    setAnswers({});
-    setResults(null);
-  };
+        .card {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 3rem 2rem;
+        }
 
-  return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #0F4A95 0%, #1e66c4 100%)' }}>
-      <div className="container mx-auto px-4 py-8">
-        
-        {/* Intro Page */}
-        {currentPage === 'intro' && (
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
-              <div className="text-center mb-8">
-                <div className="inline-block p-4 rounded-full mb-4" style={{ backgroundColor: '#FFD834' }}>
-                  <Award className="w-16 h-16" style={{ color: '#0F4A95' }} />
-                </div>
-                <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#0F4A95' }}>
-                  Test RIASEC Lajukids
-                </h1>
-                <p className="text-xl text-gray-600 mb-6">
-                  Temukan Minat dan Bakatmu! 🌟
-                </p>
-              </div>
+        .hidden {
+            display: none !important;
+        }
 
-              <div className="rounded-2xl p-6 mb-8" style={{ backgroundColor: '#F2BCD6' }}>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: '#0F4A95' }}>
-                  Apa itu Test RIASEC?
-                </h2>
-                <p className="text-gray-700 leading-relaxed">
-                  Test RIASEC membantu kamu mengenal diri sendiri lebih baik! Test ini akan menunjukkan 
-                  minat dan tipe kepribadian kamu, sehingga kamu bisa tahu kelas apa yang paling cocok 
-                  untuk mengembangkan bakat dan kemampuanmu.
-                </p>
-              </div>
+        /* Intro Page */
+        .intro-icon {
+            background-color: #FFD834;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 3rem;
+        }
 
-              <div className="space-y-4 mb-8">
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 mt-1 flex-shrink-0" style={{ color: '#E6333A' }} />
-                  <p className="text-gray-700">18 pertanyaan singkat dan mudah</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 mt-1 flex-shrink-0" style={{ color: '#E6333A' }} />
-                  <p className="text-gray-700">Tidak ada jawaban benar atau salah</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 mt-1 flex-shrink-0" style={{ color: '#E6333A' }} />
-                  <p className="text-gray-700">Rekomendasi kelas yang sesuai dengan minatmu</p>
-                </div>
-              </div>
+        h1 {
+            color: #0F4A95;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
 
-              <button
-                onClick={() => setCurrentPage('test')}
-                className="w-full py-4 px-8 rounded-xl text-white text-xl font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-                style={{ backgroundColor: '#E6333A' }}
-              >
-                Mulai Test Sekarang
-                <ArrowRight className="w-6 h-6" />
-              </button>
+        .subtitle {
+            text-align: center;
+            font-size: 1.25rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .info-box {
+            background-color: #F2BCD6;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-box h2 {
+            color: #0F4A95;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-box p {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .checklist {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .check-icon {
+            color: #E6333A;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background-color: #E6333A;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #0F4A95;
+            color: white;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 2rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #0F4A95;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background-color: #e0e0e0;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #FFD834;
+            transition: width 0.3s;
+        }
+
+        /* Question */
+        .question-box {
+            background-color: #F2BCD6;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .question-text {
+            color: #0F4A95;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .answer-btn {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .answer-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #666;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            color: #333;
+        }
+
+        /* Results */
+        .result-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .personality-section {
+            background-color: #F2BCD6;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .personality-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .personality-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .personality-title {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .rank-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #E6333A;
+        }
+
+        .personality-name {
+            color: #0F4A95;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .personality-desc {
+            color: #666;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .score {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #FFD834;
+        }
+
+        .score-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 1rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .score-fill {
+            height: 100%;
+            background-color: #FFD834;
+        }
+
+        .detail-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .detail-section p {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+
+        .career-box {
+            background-color: #f0f9ff;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .career-title {
+            color: #0F4A95;
+            font-weight: bold;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .career-list {
+            color: #333;
+            font-size: 0.875rem;
+        }
+
+        /* Recommended Classes */
+        .section-title {
+            color: #0F4A95;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .class-card {
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid;
+        }
+
+        .class-card-high {
+            border-color: #0F4A95;
+            background-color: #e6f0ff;
+        }
+
+        .class-card-medium {
+            border-color: #FFD834;
+            background-color: #fffbeb;
+        }
+
+        .class-card-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .class-name {
+            color: #0F4A95;
+            font-weight: bold;
+        }
+
+        .class-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+            color: white;
+        }
+
+        .badge-high {
+            background-color: #0F4A95;
+        }
+
+        .badge-medium {
+            background-color: #FFD834;
+        }
+
+        .note-box {
+            background-color: #fef2f2;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .note-title {
+            color: #E6333A;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+        }
+
+        .note-box p {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: white;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 2rem 1.5rem;
+            }
+
+            .question-text {
+                font-size: 1.25rem;
+            }
+
+            .class-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-buttons .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Intro Page -->
+        <div id="introPage" class="card">
+            <div class="result-header">
+                <div class="intro-icon">🏆</div>
+                <h1>Test RIASEC Lajukids</h1>
+                <p class="subtitle">Temukan Minat dan Bakatmu! 🌟</p>
             </div>
-          </div>
-        )}
 
-        {/* Test Page */}
-        {currentPage === 'test' && (
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
-              {/* Progress Bar */}
-              <div className="mb-8">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-semibold" style={{ color: '#0F4A95' }}>
-                    Pertanyaan {currentQuestion + 1} dari {questions.length}
-                  </span>
-                  <span className="text-sm font-semibold" style={{ color: '#0F4A95' }}>
-                    {Math.round(((currentQuestion + 1) / questions.length) * 100)}%
-                  </span>
-                </div>
-                <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full transition-all duration-300"
-                    style={{
-                      width: `${((currentQuestion + 1) / questions.length) * 100}%`,
-                      backgroundColor: '#FFD834'
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Question */}
-              <div className="mb-8">
-                <div className="rounded-2xl p-6 mb-6" style={{ backgroundColor: '#F2BCD6' }}>
-                  <h2 className="text-2xl md:text-3xl font-bold text-center" style={{ color: '#0F4A95' }}>
-                    {questions[currentQuestion].text}
-                  </h2>
-                </div>
-
-                {/* Answer Options */}
-                <div className="space-y-4">
-                  {[
-                    { value: 5, label: "Sangat Setuju", color: '#0F4A95' },
-                    { value: 4, label: "Setuju", color: '#1e66c4' },
-                    { value: 3, label: "Netral", color: '#FFD834' },
-                    { value: 2, label: "Tidak Setuju", color: '#F2BCD6' },
-                    { value: 1, label: "Sangat Tidak Setuju", color: '#E6333A' }
-                  ].map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => handleAnswer(option.value)}
-                      className="w-full py-4 px-6 rounded-xl text-white font-bold text-lg shadow-md hover:shadow-lg transition-all transform hover:scale-105"
-                      style={{ backgroundColor: option.color }}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Navigation */}
-              {currentQuestion > 0 && (
-                <button
-                  onClick={() => setCurrentQuestion(currentQuestion - 1)}
-                  className="text-gray-600 hover:text-gray-800 font-semibold"
-                >
-                  ← Kembali
-                </button>
-              )}
+            <div class="info-box">
+                <h2>Apa itu Test RIASEC?</h2>
+                <p>Test RIASEC membantu kamu mengenal diri sendiri lebih baik! Test ini akan menunjukkan minat dan tipe kepribadian kamu, sehingga kamu bisa tahu kelas apa yang paling cocok untuk mengembangkan bakat dan kemampuanmu.</p>
             </div>
-          </div>
-        )}
 
-        {/* Results Page */}
-        {currentPage === 'results' && results && (
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
-              <div className="text-center mb-8">
-                <div className="inline-block p-4 rounded-full mb-4" style={{ backgroundColor: '#FFD834' }}>
-                  <Award className="w-16 h-16" style={{ color: '#0F4A95' }} />
-                </div>
-                <h1 className="text-4xl font-bold mb-4" style={{ color: '#0F4A95' }}>
-                  Hasil Test RIASEC Kamu! 🎉
-                </h1>
-              </div>
+            <ul class="checklist">
+                <li><span class="check-icon">✓</span> 18 pertanyaan singkat dan mudah</li>
+                <li><span class="check-icon">✓</span> Tidak ada jawaban benar atau salah</li>
+                <li><span class="check-icon">✓</span> Rekomendasi kelas yang sesuai dengan minatmu</li>
+            </ul>
 
-              {/* Top 3 Types */}
-              <div className="rounded-2xl p-6 mb-8" style={{ backgroundColor: '#F2BCD6' }}>
-                <h2 className="text-2xl font-bold mb-4" style={{ color: '#0F4A95' }}>
-                  Tipe Kepribadian Kamu:
-                </h2>
-                <div className="space-y-4">
-                  {results.topTypes.map((item, index) => (
-                    <div key={item.type} className="bg-white rounded-xl p-6 shadow">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl font-bold" style={{ color: '#E6333A' }}>
-                            #{index + 1}
-                          </span>
-                          <div>
-                            <h3 className="font-bold text-xl" style={{ color: '#0F4A95' }}>
-                              {riasecDescriptions[item.type].name}
-                            </h3>
-                            <p className="text-gray-600 text-sm">
-                              {riasecDescriptions[item.type].desc}
-                            </p>
-                          </div>
-                        </div>
-                        <span className="text-xl font-bold" style={{ color: '#FFD834' }}>
-                          {item.score} poin
-                        </span>
-                      </div>
-                      <div className="w-full h-2 bg-gray-200 rounded-full mb-4">
-                        <div
-                          className="h-full rounded-full"
-                          style={{
-                            width: `${(item.score / 15) * 100}%`,
-                            backgroundColor: '#FFD834'
-                          }}
-                        />
-                      </div>
-                      
-                      {/* Detailed description for parents */}
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <p className="text-gray-700 mb-3 leading-relaxed">
-                          <strong>Untuk Orang Tua:</strong> {riasecDescriptions[item.type].detailed}
-                        </p>
-                        <div className="rounded-lg p-3" style={{ backgroundColor: '#f0f9ff' }}>
-                          <p className="text-sm font-semibold mb-1" style={{ color: '#0F4A95' }}>
-                            💼 Contoh Pekerjaan yang Cocok:
-                          </p>
-                          <p className="text-sm text-gray-700">
-                            {riasecDescriptions[item.type].careers}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Recommended Classes */}
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-4" style={{ color: '#0F4A95' }}>
-                  <BookOpen className="inline w-8 h-8 mr-2" />
-                  Kelas yang Cocok untuk Kamu:
-                </h2>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {results.recommendedClasses.map((classItem) => (
-                    <div
-                      key={classItem.name}
-                      className="rounded-xl p-4 shadow-md border-2"
-                      style={{
-                        borderColor: classItem.match === 'tinggi' ? '#0F4A95' : '#FFD834',
-                        backgroundColor: classItem.match === 'tinggi' ? '#e6f0ff' : '#fffbeb'
-                      }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-bold" style={{ color: '#0F4A95' }}>
-                          {classItem.name}
-                        </h3>
-                        <span
-                          className="text-xs font-bold px-3 py-1 rounded-full"
-                          style={{
-                            backgroundColor: classItem.match === 'tinggi' ? '#0F4A95' : '#FFD834',
-                            color: 'white'
-                          }}
-                        >
-                          {classItem.match === 'tinggi' ? '🌟 Sangat Cocok' : '👍 Cocok'}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Not Recommended Classes */}
-              {results.notRecommendedClasses.length > 0 && (
-                <div className="rounded-2xl p-6 mb-8" style={{ backgroundColor: '#fef2f2' }}>
-                  <h3 className="font-bold mb-3" style={{ color: '#E6333A' }}>
-                    💡 Catatan:
-                  </h3>
-                  <p className="text-gray-700 mb-2">
-                    Berdasarkan hasil test, kelas berikut mungkin kurang sesuai dengan minat dominan kamu saat ini:
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <strong>{results.notRecommendedClasses.join(", ")}</strong>
-                  </p>
-                  <p className="text-sm text-gray-600 mt-2 italic">
-                    Tapi jangan khawatir! Kamu tetap bisa mengikuti kelas ini jika tertarik untuk mencoba hal baru! 😊
-                  </p>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex flex-col md:flex-row gap-4">
-                <button
-                  onClick={resetTest}
-                  className="flex-1 py-4 px-6 rounded-xl text-white font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-                  style={{ backgroundColor: '#0F4A95' }}
-                >
-                  <RotateCcw className="w-5 h-5" />
-                  Ulangi Test
-                </button>
-                <a
-                  href="https://lajukids.framer.website/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 py-4 px-6 rounded-xl text-white font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-105 text-center"
-                  style={{ backgroundColor: '#E6333A' }}
-                >
-                  Lihat Kelas Lajukids
-                </a>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Footer */}
-        <div className="text-center mt-8 text-white">
-          <p className="text-sm opacity-90">
-            © 2024 Lajukids - Bimbingan Belajar untuk Masa Depan Cerah
-          </p>
+            <button class="btn btn-primary" onclick="startTest()">
+                Mulai Test Sekarang →
+            </button>
         </div>
-      </div>
-    </div>
-  );
-};
 
-export default RIASECTest;
+        <!-- Test Page -->
+        <div id="testPage" class="card hidden">
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span id="progressText">Pertanyaan 1 dari 18</span>
+                    <span id="progressPercent">6%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 6%"></div>
+                </div>
+            </div>
+
+            <div class="question-box">
+                <p id="questionText" class="question-text"></p>
+            </div>
+
+            <div class="answers">
+                <button class="answer-btn" style="background-color: #0F4A95" onclick="answerQuestion(5)">Sangat Setuju</button>
+                <button class="answer-btn" style="background-color: #1e66c4" onclick="answerQuestion(4)">Setuju</button>
+                <button class="answer-btn" style="background-color: #FFD834" onclick="answerQuestion(3)">Netral</button>
+                <button class="answer-btn" style="background-color: #F2BCD6" onclick="answerQuestion(2)">Tidak Setuju</button>
+                <button class="answer-btn" style="background-color: #E6333A" onclick="answerQuestion(1)">Sangat Tidak Setuju</button>
+            </div>
+
+            <button id="backBtn" class="back-btn hidden" onclick="previousQuestion()">← Kembali</button>
+        </div>
+
+        <!-- Results Page -->
+        <div id="resultsPage" class="card hidden">
+            <div class="result-header">
+                <div class="intro-icon">🏆</div>
+                <h1>Hasil Test RIASEC Kamu! 🎉</h1>
+            </div>
+
+            <div class="personality-section">
+                <h2 style="color: #0F4A95; margin-bottom: 1rem;">Tipe Kepribadian Kamu:</h2>
+                <div id="personalityResults"></div>
+            </div>
+
+            <div>
+                <h2 class="section-title">📚 Kelas yang Cocok untuk Kamu:</h2>
+                <div id="recommendedClasses" class="class-grid"></div>
+            </div>
+
+            <div id="notRecommendedSection" class="note-box hidden">
+                <h3 class="note-title">💡 Catatan:</h3>
+                <p>Berdasarkan hasil test, kelas berikut mungkin kurang sesuai dengan minat dominan kamu saat ini:</p>
+                <p><strong id="notRecommendedList"></strong></p>
+                <p style="font-style: italic; font-size: 0.875rem;">Tapi jangan khawatir! Kamu tetap bisa mengikuti kelas ini jika tertarik untuk mencoba hal baru! 😊</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="resetTest()">
+                    ↻ Ulangi Test
+                </button>
+                <a href="https://lajukids.framer.website/" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="text-decoration: none;">
+                    Lihat Kelas Lajukids
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 Lajukids - Accelerate Your Potential, Shape Your Future</p>
+        </footer>
+    </div>
+
+    <script>
+        const questions = [
+            { id: 1, text: "Saya suka membuat atau memperbaiki barang dengan tangan saya", type: "R" },
+            { id: 2, text: "Saya suka berpikir dan memecahkan teka-teki atau masalah yang rumit", type: "I" },
+            { id: 3, text: "Saya suka menggambar, melukis, atau membuat desain kreatif", type: "A" },
+            { id: 4, text: "Saya suka membantu dan mengajar teman-teman saya", type: "S" },
+            { id: 5, text: "Saya suka memimpin kelompok dan mengorganisir kegiatan", type: "E" },
+            { id: 6, text: "Saya suka mengatur barang-barang saya dengan rapi dan teratur", type: "C" },
+            { id: 7, text: "Saya suka kegiatan olahraga atau aktivitas fisik", type: "R" },
+            { id: 8, text: "Saya suka membaca buku sains atau melakukan eksperimen", type: "I" },
+            { id: 9, text: "Saya suka menulis cerita atau membuat konten kreatif", type: "A" },
+            { id: 10, text: "Saya senang berbicara dan berkenalan dengan orang baru", type: "S" },
+            { id: 11, text: "Saya suka berdiskusi dan meyakinkan orang lain tentang ide saya", type: "E" },
+            { id: 12, text: "Saya suka mengikuti jadwal dan aturan yang jelas", type: "C" },
+            { id: 13, text: "Saya lebih suka bekerja dengan alat atau teknologi daripada berinteraksi sosial", type: "R" },
+            { id: 14, text: "Saya suka mencari tahu bagaimana sesuatu bekerja", type: "I" },
+            { id: 15, text: "Saya suka mendekorasi atau membuat sesuatu yang indah", type: "A" },
+            { id: 16, text: "Saya merasa senang ketika bisa membantu orang lain menyelesaikan masalah", type: "S" },
+            { id: 17, text: "Saya tertarik dengan bisnis atau berwirausaha", type: "E" },
+            { id: 18, text: "Saya lebih suka tugas yang memiliki langkah-langkah yang jelas", type: "C" }
+        ];
+
+        const classRecommendations = {
+            R: [
+                { name: "Kelas Coding Scratch", match: "tinggi" },
+                { name: "Kelas AI Literacy", match: "sedang" }
+            ],
+            I: [
+                { name: "Kelas Coding Scratch", match: "tinggi" },
+                { name: "Kelas AI Literacy", match: "tinggi" }
+            ],
+            A: [
+                { name: "Kelas Canva", match: "tinggi" },
+                { name: "Kelas Coding Scratch", match: "sedang" }
+            ],
+            S: [
+                { name: "Kelas Bahasa Arab", match: "tinggi" },
+                { name: "Kelas Bahasa Inggris", match: "tinggi" },
+                { name: "Kelas Soft Skill and Leadership", match: "tinggi" },
+                { name: "Kelas Pendampingan Exam", match: "tinggi" },
+                { name: "Kelas Tahfidz dan Mengaji", match: "tinggi" },
+                { name: "Kelas Calistung", match: "tinggi" }
+            ],
+            E: [
+                { name: "Kelas Soft Skill and Leadership", match: "tinggi" },
+                { name: "Kelas Canva", match: "tinggi" },
+                { name: "Kelas Bahasa Inggris", match: "sedang" }
+            ],
+            C: [
+                { name: "Kelas Coding Scratch", match: "tinggi" },
+                { name: "Kelas AI Literacy", match: "tinggi" },
+                { name: "Kelas Bahasa Arab", match: "sedang" },
+                { name: "Kelas Bahasa Inggris", match: "sedang" },
+                { name: "Kelas Calistung", match: "tinggi" },
+                { name: "Kelas Pendampingan Exam", match: "sedang" }
+            ]
+        };
+
+        const riasecDescriptions = {
+            R: { 
+                name: "Realistic (Realistis)", 
+                desc: "Kamu suka bekerja dengan tangan dan hal-hal praktis!",
+                detailed: "Anak dengan tipe Realistis cenderung suka aktivitas fisik, bekerja dengan alat dan mesin, serta hal-hal yang konkret. Mereka lebih nyaman dengan tugas yang memiliki hasil nyata yang bisa dilihat dan disentuh.",
+                careers: "Engineer, Programmer, Arsitek, Teknisi, Ahli Robotika, Desainer Produk"
+            },
+            I: { 
+                name: "Investigative (Investigatif)", 
+                desc: "Kamu suka berpikir, menganalisis, dan memecahkan masalah!",
+                detailed: "Anak dengan tipe Investigatif memiliki rasa ingin tahu yang tinggi, suka berpikir kritis, dan senang memecahkan teka-teki kompleks. Mereka gemar melakukan riset, eksperimen, dan mencari tahu 'mengapa' di balik sesuatu.",
+                careers: "Ilmuwan, Peneliti, Data Analyst, Dokter, Programmer, AI Specialist"
+            },
+            A: { 
+                name: "Artistic (Artistik)", 
+                desc: "Kamu kreatif dan suka hal-hal yang berhubungan dengan seni!",
+                detailed: "Anak dengan tipe Artistik memiliki imajinasi yang kuat dan cara berpikir yang original. Mereka senang mengekspresikan diri melalui berbagai bentuk kreativitas, tidak suka rutinitas yang kaku, dan lebih menyukai lingkungan yang memberikan kebebasan berkreasi.",
+                careers: "Desainer Grafis, Content Creator, Animator, Penulis, Musisi, Artis Digital, UI/UX Designer"
+            },
+            S: { 
+                name: "Social (Sosial)", 
+                desc: "Kamu suka membantu dan berinteraksi dengan orang lain!",
+                detailed: "Anak dengan tipe Sosial memiliki empati yang tinggi, senang berinteraksi dengan orang lain, dan merasa puas ketika bisa membantu. Mereka cenderung komunikatif, ramah, dan peduli dengan kesejahteraan orang lain.",
+                careers: "Guru, Psikolog, Konselor, Perawat, Public Relations, Customer Service, HR Specialist"
+            },
+            E: { 
+                name: "Enterprising (Enterprising)", 
+                desc: "Kamu suka memimpin dan mengorganisir!",
+                detailed: "Anak dengan tipe Enterprising memiliki jiwa kepemimpinan, percaya diri, dan berani mengambil inisiatif. Mereka senang mengorganisir kegiatan, meyakinkan orang lain, dan tertarik dengan tantangan bisnis atau proyek besar.",
+                careers: "Entrepreneur, Business Manager, Marketing Director, Project Manager, Sales Executive"
+            },
+            C: { 
+                name: "Conventional (Konvensional)", 
+                desc: "Kamu terorganisir dan suka hal-hal yang terstruktur!",
+                detailed: "Anak dengan tipe Konvensional menyukai keteraturan, detail, dan prosedur yang jelas. Mereka teliti, sistematis, dan nyaman dengan tugas-tugas yang memiliki aturan dan struktur yang pasti. Mereka juga cenderung bertanggung jawab dan dapat diandalkan.",
+                careers: "Akuntan, Administrator, Data Entry Specialist, Librarian, Quality Control, Auditor"
+            }
+        };
+
+        let currentQuestion = 0;
+        let answers = [];
+
+        function startTest() {
+            document.getElementById('introPage').classList.add('hidden');
+            document.getElementById('testPage').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            document.getElementById('questionText').textContent = questions[currentQuestion].text;
+            document.getElementById('progressText').textContent = `Pertanyaan ${currentQuestion + 1} dari ${questions.length}`;
+            document.getElementById('progressPercent').textContent = `${Math.round(((currentQuestion + 1) / questions.length) * 100)}%`;
+            document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            if (currentQuestion > 0) {
+                document.getElementById('backBtn').classList.remove('hidden');
+            } else {
+                document.getElementById('backBtn').classList.add('hidden');
+            }
+        }
+
+        function answerQuestion(value) {
+            answers[currentQuestion] = value;
+            
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                calculateResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        function calculateResults() {
+            const scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+            
+            questions.forEach((q, index) => {
+                const answer = answers[index];
+                if (answer) {
+                    scores[q.type] += answer;
+                }
+            });
+
+            const sortedScores = Object.entries(scores)
+                .sort(([, a], [, b]) => b - a)
+                .map(([type, score]) => ({ type, score }));
+
+            const topTypes = sortedScores.slice(0, 3);
+            
+            // Display personality results
+            const personalityHTML = topTypes.map((item, index) => {
+                const desc = riasecDescriptions[item.type];
+                const percentage = (item.score / 15) * 100;
+                
+                return `
+                    <div class="personality-card">
+                        <div class="personality-header">
+                            <div class="personality-title">
+                                <span class="rank-number">#${index + 1}</span>
+                                <div>
+                                    <div class="personality-name">${desc.name}</div>
+                                    <div class="personality-desc">${desc.desc}</div>
+                                </div>
+                            </div>
+                            <span class="score">${item.score} poin</span>
+                        </div>
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="detail-section">
+                            <p><strong>Untuk Orang Tua:</strong> ${desc.detailed}</p>
+                            <div class="career-box">
+                                <div class="career-title">💼 Contoh Pekerjaan yang Cocok:</div>
+                                <div class="career-list">${desc.careers}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('personalityResults').innerHTML = personalityHTML;
+
+            // Get all classes
+            const allClasses = [
+                "Kelas Coding Scratch",
+                "Kelas AI Literacy",
+                "Kelas Canva",
+                "Kelas Bahasa Arab",
+                "Kelas Bahasa Inggris",
+                "Kelas Soft Skill and Leadership",
+                "Kelas Pendampingan Exam",
+                "Kelas Tahfidz dan Mengaji",
+                "Kelas Calistung"
+            ];
+
+            const recommendedClasses = [];
+            const notRecommendedClasses = [];
+
+            allClasses.forEach(className => {
+                let isRecommended = false;
+                let matchLevel = "";
+                
+                topTypes.forEach(({ type }) => {
+                    const recommendations = classRecommendations[type];
+                    const match = recommendations.find(r => r.name === className);
+                    if (match) {
+                        isRecommended = true;
+                        if (match.match === "tinggi" && matchLevel !== "tinggi") {
+                            matchLevel = "tinggi";
+                        } else if (match.match === "sedang" && !matchLevel) {
+                            matchLevel = "sedang";
+                        }
+                    }
+                });
+
+                if (isRecommended) {
+                    recommendedClasses.push({ name: className, match: matchLevel });
+                } else {
+                    notRecommendedClasses.push(className);
+                }
+            });
+
+            // Display recommended classes
+            const classesHTML = recommendedClasses.map(classItem => {
+                const isHigh = classItem.match === 'tinggi';
+                return `
+                    <div class="class-card ${isHigh ? 'class-card-high' : 'class-card-medium'}">
+                        <div class="class-card-content">
+                            <div class="class-name">${classItem.name}</div>
+                            <span class="class-badge ${isHigh ? 'badge-high' : 'badge-medium'}">
+                                ${isHigh ? '🌟 Sangat Cocok' : '👍 Cocok'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('recommendedClasses').innerHTML = classesHTML;
+
+            // Display not recommended classes
+            if (notRecommendedClasses.length > 0) {
+                document.getElementById('notRecommendedSection').classList.remove('hidden');
+                document.getElementById('notRecommendedList').textContent = notRecommendedClasses.join(", ");
+            }
+
+            // Show results page
+            document.getElementById('testPage').classList.add('hidden');
+            document.getElementById('resultsPage').classList.remove('hidden');
+        }
+
+        function resetTest() {
+            currentQuestion = 0;
+            answers = [];
+            document.getElementById('resultsPage').classList.add('hidden');
+            document.getElementById('introPage').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
